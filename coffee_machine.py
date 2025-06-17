@@ -30,10 +30,14 @@ resources = {
     "coffee": 100,
 }
 
+money = 0
+
 def report_sources(resource_list):
+    global money
     print(f"Water: {resource_list['water']}ml")
     print(f"Milk: {resource_list['milk']}ml")
     print(f"Coffee: {resource_list['coffee']}gr")
+    print(f"Money: ${money}")
 
 def check_resources(ingredients, resource_list):
     for ingredient in ingredients:
@@ -44,25 +48,24 @@ def check_resources(ingredients, resource_list):
 
 def insert_coins(price):
     print("Please insert coins.")
-    quarters = int(input("How many quarters?: "))
-    dimes = int(input("How many dimes?: "))
-    nickels = int(input("How many nickles?: "))
-    pennies = int(input("How many pennies?: "))
-    quarters = quarters * 0.25
-    dimes = dimes * 0.1
-    nickels = nickels * 0.05
-    pennies = pennies * 0.01
+    quarters = int(input("How many quarters?: ")) * 0.25
+    dimes = int(input("How many dimes?: ")) * 0.1
+    nickels = int(input("How many nickles?: ")) * 0.05
+    pennies = int(input("How many pennies?: ")) * 0.01
     total = quarters + dimes + nickels + pennies
-    change = total - price
     if total < price:
         print("Sorry, that's not enough money. Money refunded.")
         return False
     else:
+        change = total - price
         print(f"Here is ${change:.2f} in change.")
-        return True
+    return True
 
-def make_coffee(coffee, ingredients):
+
+def make_coffee(coffee, ingredients, price):
     global resources
+    global money
+    money += price
     for ingredient in ingredients:
         resources[ingredient] -= ingredients[ingredient]
     print(f"Here is your {coffee} ☕. Enjoy!")
@@ -87,16 +90,17 @@ while is_machine_on:
         if check_resources(espresso_ingredients, resources):
             is_money_enough = insert_coins(espresso_cost)
             if is_money_enough:
-                make_coffee("espresso", espresso_ingredients)
+                make_coffee("espresso", espresso_ingredients, espresso_cost)
     elif prompt == "latte":
         if check_resources(latte_ingredients, resources):
             is_money_enough = insert_coins(latte_cost)
             if is_money_enough:
-                make_coffee("latte", latte_ingredients)
+                make_coffee("latte", latte_ingredients, latte_cost)
     elif prompt == "cappuccino":
         if check_resources(cappuccino_ingredients, resources):
             is_money_enough = insert_coins(cappuccino_cost)
             if is_money_enough:
-                make_coffee("cappuccino", cappuccino_ingredients)
+                make_coffee("cappuccino", cappuccino_ingredients, cappuccino_cost)
     else:
         print("Please enter a valid input.")
+
